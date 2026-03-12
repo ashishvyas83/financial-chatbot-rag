@@ -1,0 +1,104 @@
+<div class="chat-app">
+  
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="bank-logo">
+      <div class="logo-icon">FB</div>
+      <div class="bank-info">
+        <h1>FirstBank</h1>
+        <span class="tagline">Virtual Assistant</span>
+      </div>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span>Online</span>
+    </div>
+  </div>
+
+  <!-- Quick Questions -->
+  <div class="quick-questions">
+    <span class="quick-label">Quick questions:</span>
+    <button (click)="askQuickQuestion('What credit cards do you offer?')">
+      💳 Credit Cards
+    </button>
+    <button (click)="askQuickQuestion('Tell me about home loans')">
+      🏠 Home Loans
+    </button>
+    <button (click)="askQuickQuestion('What are your savings account rates?')">
+      💰 Savings
+    </button>
+    <button (click)="askQuickQuestion('What is the ATM withdrawal limit?')">
+      🏧 ATM Limits
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages-container" #messagesContainer>
+    @for (message of messages(); track message.id) {
+      <div class="message-wrapper" 
+           [class.user-wrapper]="message.sender === 'user'"
+           [class.bot-wrapper]="message.sender === 'bot'">
+        
+        <!-- Bot avatar -->
+        @if (message.sender === 'bot') {
+          <div class="avatar">S</div>
+        }
+
+        <!-- Message bubble -->
+        <div class="message-bubble"
+             [class.user-bubble]="message.sender === 'user'"
+             [class.bot-bubble]="message.sender === 'bot'">
+          
+          @if (message.isLoading) {
+            <!-- Typing indicator -->
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          } @else {
+            <p>{{ message.text }}</p>
+            <span class="timestamp">
+              {{ message.timestamp | date:'shortTime' }}
+            </span>
+          }
+        </div>
+
+        <!-- User avatar -->
+        @if (message.sender === 'user') {
+          <div class="avatar user-avatar">U</div>
+        }
+
+      </div>
+    }
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-wrapper">
+      <input 
+        type="text"
+        [value]="userInput()"
+        (input)="onInputChange($any($event.target).value)"
+        (keypress)="onKeyPress($event)"
+        placeholder="Ask me about accounts, cards, loans..."
+        [disabled]="isLoading()"
+        class="message-input"
+      />
+      <button 
+        (click)="sendMessage()"
+        [disabled]="isLoading() || !userInput().trim()"
+        class="send-button">
+        @if (isLoading()) {
+          ⏳
+        } @else {
+          ➤
+        }
+      </button>
+    </div>
+    <p class="disclaimer">
+      FirstBank AI Assistant — For urgent help call 1-800-FIRST-BK
+    </p>
+  </div>
+
+</div>
