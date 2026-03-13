@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Message } from './messages.model';
-import { ChatService } from '../src/app/services/chat.service';
+import { ChatService } from '../services/chat.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -103,4 +103,25 @@ export class ChatComponent {
     this.userInput.set(question);
     this.sendMessage();
   }
+
+
+  // Add this method
+startNewChat() {
+  this.chatService.clearChat().subscribe({
+    next: () => {
+      this.chatService.newSession();
+      this.messages.set([]);    // clear UI messages
+      this.addBotMessage(
+        "Hello! I'm Surabhi, your FirstBank assistant. " +
+        "How can I help you today?"
+      );
+    },
+    error: () => {
+      // Even if API call fails, clear UI
+      this.chatService.newSession();
+      this.messages.set([]);
+      this.addBotMessage("Starting fresh! How can I help?");
+    }
+  });
+}
 }
